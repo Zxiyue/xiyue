@@ -1,0 +1,85 @@
+
+erupt-app:
+    # 登录失败几次出现验证码，值为0时表示一直需要登录验证码
+    verifyCodeCount: 2 
+    # 登录密码是否加密传输，特殊场景如：LDAP登录可关闭该功能获取密码明文
+    pwdTransferEncrypt: true
+    # 多语言配置，默认支持：简体中文、繁体中文、英文、日文；具体配置详见erupt-i18n模块
+    locales: [ "zh-CN","zh-TW","en-US","ja-JP"]
+    # 自定义登录页路径
+    # loginPagePath:
+erupt:
+    # 是否开启csrf防御
+    csrfInspect: true
+    # 开启redis方式存储session，默认false，开启后需在配置文件中添加redis配置（同 Spring Boot）
+    redisSession: false
+    # redis session是否自动续期，1.10.8及以上版本支持
+    redisSessionRefresh: false
+    # 附件上传存储路径, 默认路径为：/opt/erupt-attachment
+    uploadPath: ${online_uploadPath :D:/erupt/attachment}
+    # 是否保留上传文件原始名称
+    keepUploadFileName: false
+    # 项目初始化方式，默认值 file，1.10.10及以上版本支持，可选值：
+    # NONE  不执行初始化代码
+    # EVERY 每次启动都进行初始化
+    # FILE  通过标识文件判断是否需要初始化
+    initMethodEnum: file
+    upms:
+        # 登录session时长（redisSession为true时有效）
+        expireTimeByLogin: 60
+        # 严格的角色菜单策略，如果非管理员用户拥有“角色管理权限”则仅能编辑已有权限的角色菜单
+        strictRoleMenuLegal: true
+    # 是否开启任务调度（导入erupt-job时有效）
+    job.enable: true
+    # 是否记录操作日志，默认true，该功能开启后可在【系统管理 → 操作日志】中查看操作日志
+    security.recordOperateLog: true
+
+# 当 erupt.redisSession 为 true 时必须配置此项！
+spring:
+    mvc:
+        pathmatch:
+            # Spingfox使用的路径匹配是基于AntPAthMatcher的，而Sping Boot 使用的是PathPatternMatcher
+            # 所以需要配置此参数
+            matching-strategy: ant_path_matcher
+    redis:
+        database: 0
+        timeout: 10000
+        host: 127.0.0.1
+    datasource:
+        url: jdbc:mysql://${online_ip:localhost}:3306/${online_db_name:erupt}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+#        url: jdbc:mysql://127.0.0.1:3306/erupt?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+        username: ${online_db_username:root}
+#        username: root
+        password: ${online_db_password:123456}
+#        password: 123456
+    jpa:
+        show-sql: true
+        generate-ddl: true
+        database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+        database: mysql
+    profiles:
+        active: dev
+    mail:
+        username: xxxx@qq.com
+        password: xxxxxxx
+        host: smtp.qq.com
+        properties:
+            mail.smtp.ssl.auth: true
+            mail.smtp.ssl.enable: true
+            mail.smtp.ssl.required: true
+    servlet:
+        multipart:
+            max-file-size: 100MB
+            max-request-size: 100MB
+
+server:
+    # 定义端口
+    port : ${online_port:8082}
+    # 启用 gzip 压缩
+    compression:
+        mime-types: application/javascript,text/css,application/json,application/xml,text/html,text/xml,text/plain
+        enabled: true
+    error:
+        includeException: true
+        includeStacktrace: ALWAYS
+        includeMessage: ALWAYS
